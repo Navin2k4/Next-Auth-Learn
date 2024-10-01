@@ -22,4 +22,14 @@
 
  https://authjs.dev/getting-started/adapters/prisma
 
+https://authjs.dev/getting-started/installation?framework=Next.js
+npm install next-auth@beta
+set up handler middleware and route file 
+
  npm i @auth/prisma-adapter
+
+
+
+
+
+ TODO: Try to change the server actions to the api routes after finishing 

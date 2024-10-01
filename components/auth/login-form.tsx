@@ -35,41 +35,29 @@ export const LoginForm = () => {
       password: "",
     },
   });
-  // using server action
-  /*
-  const onSubmit = async (values: z.infer<typeof LoginSchema>) => {
-    setError("");
-    setSuccess("");
-    startTransition(()=>{
-      login(values)
-        .then((data)=>{
-          setError(data.error);
-          setSuccess(data.success);
-        })
-    })
-  };
-  */
-  // using the api route
+
+
   const onSubmit = (values: z.infer<typeof LoginSchema>) => {
     setError("");
     setSuccess("");
-  
-    axios.post('/api/auth/signin', values)
-      .then((response) => {
-        startTransition(() => {
-          if (response.data.success) {
-            setSuccess("Login successful!");
-          } else {
-            setError(response.data.message || "Login failed. Please try again.");
+    startTransition(() => {
+      login(values)
+        .then((data:any) => {
+          if (data?.error) {
+            form.reset();
+            setError(data.error);
           }
+
+          if (data?.success) {
+            form.reset();
+            setSuccess(data.success);
+          }
+
+        })
+        .catch(() => {
+          setError("Something went wrong");
         });
-      })
-      .catch((error) => {
-        console.error('Error during login:', error);
-        startTransition(() => {
-          setError("An error occurred. Please try again.");
-        });
-      });
+    });
   };
   
   return (

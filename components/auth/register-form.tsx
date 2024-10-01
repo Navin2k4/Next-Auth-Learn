@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RegisterSchema } from "@/schemas";
 import { CardWrapper } from "@/components/auth/card-wrapper";
+import { useRouter } from "next/navigation";
 
 import {
   Form,
@@ -27,6 +28,7 @@ export const RegisterForm = () => {
 
   const [errorMessage, setErrorMessage] = useState<string | undefined>("");
   const [successMessage, setSuccessMessage] = useState<string | undefined>("");
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
@@ -37,44 +39,16 @@ export const RegisterForm = () => {
     },
   });
 
-
-  /*  
-    const onSubmit = async (values: z.infer<typeof LoginSchema>) => {
-      setError("");
-      setSuccess("");
-      startTransition(()=>{
-        register(values)
-          .then((data)=>{
-            setError(data.error);
-            setSuccess(data.success);
-          })
-      })
-    };
-  */
-
   const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
     setErrorMessage("");
     setSuccessMessage("");
-    setIsPending(true); 
-    axios.post('/api/auth/register', values)
-      .then((response) => {
-        console.log('API Response:', response.data);
-        setIsPending(false);
-        if (response.data.success) {
-          setSuccessMessage(response.data.success);
-        } else {
-          setErrorMessage(response.data.error || "Registration failed. Please try again.");
-        }
-      })
-      .catch((error) => {
-        console.error('Error during registration:', error);
-        setIsPending(false);
-        const errorMsg = error.response?.data?.error || "An error occurred. Please try again.";
-        setErrorMessage(errorMsg);
+    startTransition(() => {
+      register(values).then((data) => {
+        if (data.error) setErrorMessage(data.error);
+        else if (data.success) setSuccessMessage(data.success);
       });
+    });
   };
-
-
 
   return (
     <CardWrapper
