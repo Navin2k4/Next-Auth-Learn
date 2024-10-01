@@ -1,27 +1,48 @@
-// here using the api routes if we need the server action refer the action folder
+import { NextResponse } from "next/server";
+import { RegisterSchema } from "@/schemas";
+import bcrypt from "bcryptjs";
+import { db } from "@/lib/db";
+import { getUserByEmail } from "@/data/user";
 
-import { NextResponse } from 'next/server';
-import { RegisterSchema } from '@/schemas';
+export async function POST(request: Request) {
+  const { success, data, error } = RegisterSchema.safeParse(await request.json());
 
-export async function POST(request:Request) {
-  // Parse the request body
-  const body = await request.json(); // Extract the JSON from the request body
-
-  // Validate the parsed JSON using zod schema
-  const validatedFields = RegisterSchema.safeParse(body);
-
-  // If validation fails, return a 400 error with the validation errors
-  if (!validatedFields.success) {
-    return NextResponse.json({ success: false, errors: validatedFields.error.errors },
+  if (!success) {
+    return NextResponse.json(
+      { success: false, errors: error.errors },
       { status: 400 }
     );
   }
 
-  const { email, password, name } = validatedFields.data;
-console.log(email,password,name);
+  const { email, password, name } = data;
 
-  // Here you can implement your authentication logic, e.g., checking user credentials
+  const existingUser = await getUserByEmail(email);
+  if (existingUser) {
+    return NextResponse.json(
+      { error: "Email already in use" },
+      { status: 400 }
+    );
+  }
 
-  // For demonstration purposes, we're returning a success response
-  return NextResponse.json({ success: true });
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await db.user.create({
+      data: {
+        name,
+        email,
+        password: hashedPassword,
+      },
+    });
+
+    // TODO: Send verification token email
+
+    return NextResponse.json({ success: "User registered successfully" });
+  } catch (error) {
+    console.error("Database operation failed:", error);
+    return NextResponse.json(
+      { error: "An error occurred during registration" },
+      { status: 500 }
+    );
+  }
 }

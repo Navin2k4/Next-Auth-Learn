@@ -50,28 +50,28 @@ export const LoginForm = () => {
   };
   */
   // using the api route
-  const onSubmit = async (values: z.infer<typeof LoginSchema>) => {
+  const onSubmit = (values: z.infer<typeof LoginSchema>) => {
     setError("");
     setSuccess("");
-    try {
-      // Perform the Axios request outside `startTransition`
-      const response = await axios.post('/api/auth/signin', values);
-      console.log('API Response:', response.data);
-      // Wrap non-urgent state updates inside `startTransition`
-      startTransition(() => {
-        if (response.data.success) {
-          setSuccess("Login successful!");
-        } else {
-          setError(response.data.message || "Login failed. Please try again.");
-        }
+  
+    axios.post('/api/auth/signin', values)
+      .then((response) => {
+        startTransition(() => {
+          if (response.data.success) {
+            setSuccess("Login successful!");
+          } else {
+            setError(response.data.message || "Login failed. Please try again.");
+          }
+        });
+      })
+      .catch((error) => {
+        console.error('Error during login:', error);
+        startTransition(() => {
+          setError("An error occurred. Please try again.");
+        });
       });
-    } catch (error) {
-      console.error('Error during login:', error);
-      startTransition(() => {
-        setError("An error occurred. Please try again.");
-      });
-    }
   };
+  
   return (
     <CardWrapper
       headerLabel="Welcome Back!"

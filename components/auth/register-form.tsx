@@ -17,13 +17,13 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { FormError } from "../form-error";
 import { FormSuccess } from "../form-success";
-import { useState } from "react";
+import { startTransition, useState } from "react";
 import axios from "axios";
 import { useTransition } from "react";
 import { register } from "@/actions/register";
 
 export const RegisterForm = () => {
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
 
   const [errorMessage, setErrorMessage] = useState<string | undefined>("");
   const [successMessage, setSuccessMessage] = useState<string | undefined>("");
@@ -33,51 +33,49 @@ export const RegisterForm = () => {
     defaultValues: {
       email: "",
       password: "",
-      name:""
+      name: ""
     },
   });
 
 
-/*  
-  const onSubmit = async (values: z.infer<typeof LoginSchema>) => {
-    setError("");
-    setSuccess("");
-    startTransition(()=>{
-      register(values)
-        .then((data)=>{
-          setError(data.error);
-          setSuccess(data.success);
-        })
-    })
-  };
-*/
+  /*  
+    const onSubmit = async (values: z.infer<typeof LoginSchema>) => {
+      setError("");
+      setSuccess("");
+      startTransition(()=>{
+        register(values)
+          .then((data)=>{
+            setError(data.error);
+            setSuccess(data.success);
+          })
+      })
+    };
+  */
 
-const onSubmit = async (values: z.infer<typeof RegisterSchema>) => {
+  const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
     setErrorMessage("");
     setSuccessMessage("");
-
-    try {
-      // Perform the Axios request outside `startTransition`
-      const response = await axios.post('/api/auth/register', values);
-      console.log('API Response:', response.data);
-
-      // Wrap non-urgent state updates inside `startTransition`
-      startTransition(() => {
+    setIsPending(true); 
+    axios.post('/api/auth/register', values)
+      .then((response) => {
+        console.log('API Response:', response.data);
+        setIsPending(false);
         if (response.data.success) {
-          setSuccessMessage("Login successful!");
+          setSuccessMessage(response.data.success);
         } else {
-          setErrorMessage(response.data.message || "Login failed. Please try again.");
+          setErrorMessage(response.data.error || "Registration failed. Please try again.");
         }
+      })
+      .catch((error) => {
+        console.error('Error during registration:', error);
+        setIsPending(false);
+        const errorMsg = error.response?.data?.error || "An error occurred. Please try again.";
+        setErrorMessage(errorMsg);
       });
-    } catch (error) {
-      console.error('Error during login:', error);
-      startTransition(() => {
-        setErrorMessage("An error occurred. Please try again.");
-      });
-    }
   };
-  
-  
+
+
+
   return (
     <CardWrapper
       headerLabel="Create an Account!"
@@ -139,9 +137,9 @@ const onSubmit = async (values: z.infer<typeof RegisterSchema>) => {
           </div>
           <FormError message={errorMessage} />
           <FormSuccess message={successMessage} />
-
-          <Button type="submit" className="w-full">
-            Login
+          {/* Your form fields go here */}
+          <Button type="submit" className="w-full" disabled={isPending}>
+            {isPending ? 'Registering...' : 'Register'}
           </Button>
         </form>
       </Form>
