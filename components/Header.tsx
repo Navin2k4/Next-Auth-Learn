@@ -15,23 +15,27 @@ import { auth, signOut } from '@/auth'
 const Header = async () => {
     const session = await auth();
     const user = session?.user;
+
+    
     return (
         <header className="flex items-center justify-between p-4 bg-gray-800 text-white">
             <div className='flex gap-3 items-center '>
-            <h1 className="text-2xl font-bold min-w-fit">Urban Uplift</h1>
+                <h1 className="text-2xl font-bold min-w-fit">Urban Uplift</h1>
                 <Input
                     type="search"
                     placeholder="Search issues..."
                     className="max-w-sm bg-slate-200 text-white placeholder-gray-400 border-gray-600"
-                    />
-                    </div>
+                />
+            </div>
             <div className="flex items-center space-x-4">
+                {user && 
                 <Link href='/user/id/profile'>
                     <Avatar>
                         <AvatarImage src="https://promptopia-mauve.vercel.app/_next/image?url=https%3A%2F%2Flh3.googleusercontent.com%2Fa%2FACg8ocIeRpDQ_iMQE5KKxJIcDB67m9JTPlRleUKi2wg_yooyheS9tU-C%3Ds96-c&w=48&q=75" alt="@shadcn" />
                         <AvatarFallback>CN</AvatarFallback>
                     </Avatar>
                 </Link>
+                }
 
                 {user ?
                     <form
@@ -40,13 +44,13 @@ const Header = async () => {
                             await signOut();
                         }}
                     >
-                        <Button variant='secondary' size='lg'>
-                            Sign Out
+                        <Button variant='secondary' className=" hover:bg-green-600 hover:text-white text-black" size='lg'>
+                        Sign Out
                         </Button>
                     </form>
                     :
                     <LoginButton>
-                        <Button variant='secondary' className="bg-black hover:bg-green-600 text-white" size='lg'>
+                        <Button variant='secondary' className=" hover:bg-green-600 hover:text-white text-black" size='lg'>
                             Login
                         </Button>
                     </LoginButton>

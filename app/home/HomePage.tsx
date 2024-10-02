@@ -12,8 +12,9 @@ const HomePage = async () => {
   return (
     <div className="flex flex-col">
       <main className="flex-grow">
-        <section className="bg-gradient-to-b from-green-500 to-transparent py-40 text-center">
+        <section className="bg-gradient-to-b from-green-500 via-green-200 to-transparent pt-32 pb-48 text-center">
           <div className="container mx-auto px-4">
+            {user && <h2 className="text-4xl font-bold mb-4">Welcome! {user?.name}</h2>}
             <h2 className="text-4xl font-bold mb-4">Empowering Communities, One Issue at a Time</h2>
             <p className="text-xl mb-8 max-w-2xl mx-auto">
               URBAN UPLIFT connects citizens, government, and NGOs to solve local environmental issues quickly and efficiently.
@@ -35,7 +36,7 @@ const HomePage = async () => {
           </div>
         </section>
 
-        <section className="py-16">
+        <section className="py-16 bg-white">
           <div className="container mx-auto px-4">
             <h3 className="text-2xl font-semibold mb-8 text-center">How It Works</h3>
             <div className="grid md:grid-cols-3 gap-8">

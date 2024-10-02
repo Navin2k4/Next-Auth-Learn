@@ -6,28 +6,30 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import Link from 'next/link'
-import { signOut } from '@/auth'
+import { auth, signOut } from '@/auth'
 
-const userData = {
-  name: "Jane Doe",
-  email: "jane.doe@example.com",
-  phone: "+1 (555) 123-4567",
-  location: "New York, NY",
-  avatar: "/placeholder.svg?height=200&width=200",
-  contributions: {
-    issuesReported: 15,
-    issuesResolved: 8,
-    totalUpvotes: 127,
-    totalComments: 42
-  },
-  recentActivity: [
-    { type: 'report', description: 'Reported a pothole on Main St', date: '2023-06-20' },
-    { type: 'upvote', description: 'Upvoted "Broken streetlight" issue', date: '2023-06-18' },
-    { type: 'comment', description: 'Commented on "Park cleanup" event', date: '2023-06-15' },
-  ]
-}
+const ProfilePage = async () => {
+  const session = await auth()
+  const user = session?.user;
 
-export default function ProfilePage() {
+  const userData = {
+    name: user?.name || "Unknown User",
+    email: user?.email || "No email provided",
+    phone: "+1 (555) 123-4567",  
+    location: "New York, NY", 
+    avatar: user?.image || "/placeholder.svg?height=200&width=200",
+    contributions: {
+      issuesReported: 15,
+      issuesResolved: 8,
+      totalUpvotes: 127,
+      totalComments: 42
+    },
+    recentActivity: [
+      { type: 'report', description: 'Reported a pothole on Main St', date: '2023-06-20' },
+      { type: 'upvote', description: 'Upvoted "Broken streetlight" issue', date: '2023-06-18' },
+      { type: 'comment', description: 'Commented on "Park cleanup" event', date: '2023-06-15' },
+    ]
+  }
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">My Profile</h1>
@@ -35,7 +37,11 @@ export default function ProfilePage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <Card className="md:col-span-1">
           <CardHeader>
-            <CardTitle>Account Details</CardTitle>
+          <CardTitle>Account Details</CardTitle>
+          {user &&
+          <CardTitle>{user?.role}</CardTitle>
+          }
+          
           </CardHeader>
           <CardContent>
             <div className="flex flex-col items-center">
@@ -45,7 +51,7 @@ export default function ProfilePage() {
               </Avatar>
               <h2 className="text-2xl font-semibold mb-4">{userData.name}</h2>
               <Link href='/user/id/profile/edit-profile'>
-              <Button variant="outline" className="mb-4" >
+              <Button className="mb-4 bg-blue-100 text-black hover:text-white hover:bg-blue-600 border-blue-600 border" >
                 <Edit className="mr-2 h-4 w-4" />
                 Edit Profile
               </Button>
@@ -127,3 +133,6 @@ export default function ProfilePage() {
     </div>
   )
 }
+
+
+export default ProfilePage

@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginSchema } from "@/schemas";
 import { CardWrapper } from "@/components/auth/card-wrapper";
+import { useSearchParams } from "next/navigation";
 
 import {
   Form,
@@ -23,8 +24,12 @@ import { useTransition } from "react";
 import { login } from "@/actions/login";
 
 export const LoginForm = () => {
-  const [isPending, startTransition] = useTransition();
 
+  const searchParams = useSearchParams();
+  const urlError = searchParams.get("error") === "OAuthAccountNotLinked" ? "Email already in With Different Account " : "";
+  
+
+  const [isPending, startTransition] = useTransition();
   const [errorMessage, setError] = useState<string | undefined>("");
   const [successMessage, setSuccess] = useState<string | undefined>("");
 
@@ -47,11 +52,11 @@ export const LoginForm = () => {
             form.reset();
             setError(data.error);
           }
-
-          if (data?.success) {
-            form.reset();
-            setSuccess(data.success);
-          }
+          //TODO: Addsuccess message when we add the 2FA 
+          // if (data?.success) {
+          //   form.reset();
+          //   setSuccess(data.success);
+          // }
 
         })
         .catch(() => {
@@ -104,7 +109,7 @@ export const LoginForm = () => {
               )}
             />
           </div>
-          <FormError message={errorMessage} />
+          <FormError message={errorMessage || urlError} />
           <FormSuccess message={successMessage} />
 
           <Button type="submit" className="w-full">
