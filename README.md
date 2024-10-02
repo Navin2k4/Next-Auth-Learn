@@ -52,5 +52,10 @@ callbacks:{
 npx prisma db push
 
 
+npm i uuid => Generate unique verification id
+
+
+RESEND email is only for production even if i have hosted in vercel it cannot sent the email only the domains we obtain .com .in .co like that
+
 
  TODO: Try to change the server actions to the api routes after finishing 

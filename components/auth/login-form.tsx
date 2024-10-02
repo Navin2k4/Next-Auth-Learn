@@ -49,15 +49,11 @@ export const LoginForm = () => {
       login(values)
         .then((data:any) => {
           if (data?.error) {
-            form.reset();
             setError(data.error);
           }
-          //TODO: Addsuccess message when we add the 2FA 
-          // if (data?.success) {
-          //   form.reset();
-          //   setSuccess(data.success);
-          // }
-
+          if (data?.success) {
+            setSuccess(data.success);
+          }
         })
         .catch(() => {
           setError("Something went wrong");
