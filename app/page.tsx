@@ -2,6 +2,7 @@ import { Poppins } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { LoginButton } from "@/components/auth/login-button";
+import HomePage from "./home/HomePage";
 
 const font = Poppins({
   subsets: ["latin"],
@@ -10,29 +11,10 @@ const font = Poppins({
 
 export default function Home() {
   return (
-    <main
-      className="flex h-full flex-col items-center justify-center
-        bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-green-400 via-green-600 to-green-800
-  "
-    >
-      <div className="space-y-6 text-center">
-        <h1
-          className={cn(
-            "text-6xl font-semibold drop-shadow-md text-white",
-            font.className
-          )}
-        >
-          Auth
-        </h1>
-        <p className="text-white text-lg ">Authentication</p>
-        <div>
-          <LoginButton>
-            <Button variant="secondary" size="lg">
-              Sign In
-            </Button>
-          </LoginButton>
-        </div>
-      </div>
-    </main>
+    <div className="flex flex-col min-h-screen bg-gray-100">
+      <main className="flex-1 overflow-y-auto">
+        <HomePage />
+      </main>
+    </div>
   );
 }

@@ -27,8 +27,29 @@ npm install next-auth@beta
 set up handler middleware and route file 
 
  npm i @auth/prisma-adapter
+ 
+- Extending the sessions in the auth.ts file using the callbacks added the token.sub to the session user id
 
+callbacks:{
+    async session({token , session}){
+      console.log({
+        sessionToke:token,
+        session,
+      });
+      if(token.sub && session.user){
+        session.user.id = token.sub;
+      }
+      return session;
+    } ,
 
+    async jwt({token}){
+      return token
+    },
+
+- Added the user Role in the user Schema so resetting the database
+
+ npx prisma migrate reset
+npx prisma db push
 
 
 

@@ -5,6 +5,7 @@
  */
 export const publicRoutes: string[] = [
     "/",
+    "/home"
 ]
 /**
  * Routs that are used fot tha authentication
@@ -26,4 +27,4 @@ export const apiAuthPrefix: string = "/api/auth";
  * @type {string}
  */
 
-export const DEFAULT_LOGIN_REDIRECT: string = '/settings';
+export const DEFAULT_LOGIN_REDIRECT: string = '/';
