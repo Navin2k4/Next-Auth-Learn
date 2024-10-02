@@ -5,7 +5,7 @@
  */
 export const publicRoutes: string[] = [
     "/",
-    "/home"
+    "/auth/new-verification"
 ]
 
 /**
