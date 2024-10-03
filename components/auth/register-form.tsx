@@ -22,6 +22,7 @@ import { startTransition, useState } from "react";
 import axios from "axios";
 import { useTransition } from "react";
 import { register } from "@/actions/register";
+import { ScaleLoader } from "react-spinners";
 
 export const RegisterForm = () => {
   const [isPending, setIsPending] = useState(false);
@@ -42,13 +43,26 @@ export const RegisterForm = () => {
   const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
     setErrorMessage("");
     setSuccessMessage("");
+    setIsPending(true); // Start pending state here
+  
     startTransition(() => {
-      register(values).then((data) => {
-        if (data.error) setErrorMessage(data.error);
-        else if (data.success) setSuccessMessage(data.success);
-      });
+      register(values)
+        .then((data) => {
+          if (data.error) {
+            setErrorMessage(data.error);
+          } else if (data.success) {
+            setSuccessMessage(data.success);
+          }
+        })
+        .catch((error) => {
+          setErrorMessage("An unexpected error occurred.");
+        })
+        .finally(() => {
+          setIsPending(false); 
+        });
     });
   };
+  
 
   return (
     <CardWrapper
@@ -112,8 +126,13 @@ export const RegisterForm = () => {
           <FormError message={errorMessage} />
           <FormSuccess message={successMessage} />
           {/* Your form fields go here */}
-          <Button type="submit" className="w-full" disabled={isPending}>
-            {isPending ? 'Registering...' : 'Register'}
+          <Button type="submit" className="w-full">
+            {isPending ? 
+            <ScaleLoader  height={10}  color='white' loading={true} />
+            : 
+            "Register"
+            }
+            
           </Button>
         </form>
       </Form>

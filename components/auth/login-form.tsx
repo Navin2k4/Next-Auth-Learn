@@ -19,10 +19,9 @@ import { Button } from "../ui/button";
 import { FormError } from "../form-error";
 import { FormSuccess } from "../form-success";
 import { useState } from "react";
-import axios from "axios";
 import { useTransition } from "react";
 import { login } from "@/actions/login";
-
+import {ScaleLoader} from 'react-spinners';
 export const LoginForm = () => {
 
   const searchParams = useSearchParams();
@@ -40,7 +39,6 @@ export const LoginForm = () => {
       password: "",
     },
   });
-
 
   const onSubmit = (values: z.infer<typeof LoginSchema>) => {
     setError("");
@@ -109,7 +107,12 @@ export const LoginForm = () => {
           <FormSuccess message={successMessage} />
 
           <Button type="submit" className="w-full">
-            Login
+            {isPending ? 
+            <ScaleLoader  height={10}  color='white' loading={true} />
+            : 
+            "Login"
+            }
+            
           </Button>
         </form>
       </Form>
